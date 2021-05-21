@@ -4,6 +4,9 @@
 The official Java driver for RoseDB with simple implementations; this covers all of the functions of RoseDB as of writing (5/22/2021) from updating values to deleting values
 and also adding. It basically has everything.
 
+## Important notes
+Please use **JAVA 11** since we do not support Java 8 anymore simply because it is too outdated.
+
 ## How to get started?
 Assuming you have installed RoseDB onto a server or your own computer and also installed the driver onto your Java project (if you haven't please look at Installation section)
 then we can move on to setting up the driver which is extremely simple and self-explanatory by itself.
