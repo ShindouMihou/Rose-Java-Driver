@@ -82,9 +82,10 @@ public class RoseDriverImpl implements RoseDriver {
             client.send(request.put("authorization", authentication)
                     .put("method", method).put("database", database).put("unique", unique).toString());
 
+            int i = 0;
             // If you have any better way of getting responses, please edit.
-            while(ResponseManager.isNull(unique)){
-                try { Thread.sleep(5); } catch (InterruptedException ignored) {}
+            while(ResponseManager.isNull(unique) && i < 30){
+                try { i++; Thread.sleep(5); } catch (InterruptedException ignored) {}
             }
         }).thenApply(unused -> {
             JSONObject response = new JSONObject(ResponseManager.get(unique));
