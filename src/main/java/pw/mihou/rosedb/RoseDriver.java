@@ -15,6 +15,7 @@ public interface RoseDriver {
      * @param collection the collection holding the data.
      * @param identifier the name or identifier of the data.
      * @return JSONObject.
+     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
     CompletableFuture<JSONObject> get(String database, String collection, String identifier);
 
@@ -28,6 +29,7 @@ public interface RoseDriver {
      * @param document the document.
      * @return the same JSON Object but from the server (also with exceptions, if it fails).
      * @throws pw.mihou.rosedb.exceptions.FileModificationException if the server failed to add the item.
+     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
     CompletableFuture<JSONObject> add(String database, String collection, String identifier, JSONObject document);
 
@@ -39,6 +41,7 @@ public interface RoseDriver {
      * @param key the key that will be removed.
      * @return the updated data in the form of an JSONObject.
      * @throws pw.mihou.rosedb.exceptions.FileModificationException if the server failed to update the item.
+     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
     CompletableFuture<JSONObject> remove(String database, String collection, String identifier, String key);
 
@@ -49,6 +52,7 @@ public interface RoseDriver {
      * @param identifier the identifier of the data to be removed.
      * @return whether the deletion was acknowledged
      * @throws pw.mihou.rosedb.exceptions.FileDeletionException if the server failed to remove the item.
+     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
     CompletableFuture<Boolean> remove(String database, String collection, String identifier);
 
@@ -58,6 +62,7 @@ public interface RoseDriver {
      * @param collection the collection holding the data to be removed.
      * @return whether the deletion was acknowledged
      * @throws pw.mihou.rosedb.exceptions.FileDeletionException if the server failed to remove the collection.
+     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
     CompletableFuture<Boolean> removeCollection(String database, String collection);
 
@@ -66,6 +71,7 @@ public interface RoseDriver {
      * @param database the database holding the data.
      * @return whether the deletion was acknowledged
      * @throws pw.mihou.rosedb.exceptions.FileDeletionException if the server failed to remove the database.
+     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
     CompletableFuture<Boolean> removeDatabase(String database);
 
@@ -78,6 +84,7 @@ public interface RoseDriver {
      * @param value the value that will be paired with the key.
      * @return the updated data in the form of an JSONObject.
      * @throws pw.mihou.rosedb.exceptions.FileModificationException if the server failed to update the item.
+     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
     CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, String value);
 
@@ -89,6 +96,7 @@ public interface RoseDriver {
      * @param map a map of key-value pairs.
      * @return the updated data in the form of an JSONObject.
      * @throws pw.mihou.rosedb.exceptions.FileModificationException if the server failed to update the item.
+     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
     CompletableFuture<JSONObject> update (String database, String collection, String identifier, Map<String, String> map);
 

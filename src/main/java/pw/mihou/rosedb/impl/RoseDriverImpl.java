@@ -4,6 +4,7 @@ import org.java_websocket.client.WebSocketClient;
 import org.json.JSONObject;
 import pw.mihou.rosedb.RoseDriver;
 import pw.mihou.rosedb.clients.MainClient;
+import pw.mihou.rosedb.exceptions.FailedAuthorizationException;
 import pw.mihou.rosedb.exceptions.FileDeletionException;
 import pw.mihou.rosedb.exceptions.FileModificationException;
 import pw.mihou.rosedb.manager.ResponseManager;
@@ -90,9 +91,11 @@ public class RoseDriverImpl implements RoseDriver {
         }).thenApply(unused -> {
             JSONObject response = new JSONObject(ResponseManager.get(unique));
             if(response.getInt("kode") != 1) {
-                throw method.equalsIgnoreCase("delete") || method.equalsIgnoreCase("drop") ?
-                        new CompletionException(new FileDeletionException(response.getString("response")))
-                        : new CompletionException(new FileModificationException(response.getString("response")));
+                throw response.getString("response").equalsIgnoreCase("Please validate: correct authorization code or unique value on request.")
+                        ? new CompletionException(new FailedAuthorizationException(response.getString("response")))
+                        : (method.equalsIgnoreCase("delete") || method.equalsIgnoreCase("drop")
+                        ? new CompletionException(new FileDeletionException(response.getString("response")))
+                        : new CompletionException(new FileModificationException(response.getString("response"))));
             }
 
             return response;
