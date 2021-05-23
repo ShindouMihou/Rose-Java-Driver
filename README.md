@@ -1,8 +1,7 @@
 # Rose-Java-Driver
 [![](https://jitpack.io/v/pw.mihou/Rose-Java-Driver.svg)](https://jitpack.io/#pw.mihou/Rose-Java-Driver)
 
-The official Java driver for RoseDB with simple implementations; this covers all of the functions of RoseDB as of writing (5/22/2021) from updating values to deleting values
-and also adding. It basically has everything.
+The official Java driver for RoseDB with simple implementations; this covers all of the functions of RoseDB as of writing from updating values to deleting, adding values to filtering and aggregation of database and collections. It basically has everything.
 
 ## Important notes
 Please use **JAVA 11** since we do not support Java 8 anymore simply because it is too outdated.
@@ -20,14 +19,55 @@ RoseDriver driver = new RoseBuilder().build("127.0.0.1", 5995, "authentication")
 
 After creating your Driver instance, you may opt to use any of the methods below:
 ```java
+/**
+* Retrieving of data.
+*/
 CompletableFuture<JSONObject> get(String database, String collection, String identifier);
+
+/**
+* Aggregating of database and collection.
+*/
+CompletableFuture<AggregatedCollection> aggregate(String database, String collection);
+CompletableFuture<AggregatedCollection> aggregate(String database);
+
+/**
+* Adding of data (it will automatically create collection and database if it doesn't exist)
+*/
 CompletableFuture<JSONObject> add(String database, String collection, String identifier, JSONObject document);
+
+/**
+* Removing of databases, datas or collections.
+*/
 CompletableFuture<JSONObject> remove(String database, String collection, String identifier, String key);
 CompletableFuture<Boolean> remove(String database, String collection, String identifier);
 CompletableFuture<Boolean> removeCollection(String database, String collection);
 CompletableFuture<Boolean> removeDatabase(String database);
+
+/**
+* Updating of values.
+*/
 CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, String value);
 CompletableFuture<JSONObject> update (String database, String collection, String identifier, Map<String, String> map);
+
+/**
+* Filtering of a specific database's entire collections.
+*/
+CompletableFuture<AggregatedDatabase> filter(String database, String key, String value, FilterCasing casing);
+CompletableFuture<AggregatedDatabase> filter(String database, String key, int value, NumberFilter filter);
+CompletableFuture<AggregatedDatabase> filter(String database, String key, double value, NumberFilter filter);
+CompletableFuture<AggregatedDatabase> filter(String database, String key, long value, NumberFilter filter);
+CompletableFuture<AggregatedDatabase> filter(String database, String key, boolean value);
+CompletableFuture<AggregatedDatabase> filter(String database, String key, T value);
+
+/**
+* Filtering of a specific database's collection.
+*/
+CompletableFuture<AggregatedDatabase> filter(String database, String collection, String key, String value, FilterCasing casing);
+CompletableFuture<AggregatedDatabase> filter(String database, String collection, String key, int value, NumberFilter filter);
+CompletableFuture<AggregatedDatabase> filter(String database, String collection, String key, double value, NumberFilter filter);
+CompletableFuture<AggregatedDatabase> filter(String database, String collection, String key, long value, NumberFilter filter);
+CompletableFuture<AggregatedDatabase> filter(String database, String collection, String key, boolean value);
+CompletableFuture<AggregatedDatabase> filter(String database, String collection, String key, T value);
 ```
 
 It is important that you handle the exceptions that will come out from the CompletableFuture as well, if there is ever one, an example of handling them is:
