@@ -49,6 +49,42 @@ public class RoseDriverImpl implements RoseDriver {
     }
 
     @Override
+    public CompletableFuture<AggregatedDatabase> filter(String database, String key, String value, FilterCasing casing) {
+        return send(new JSONObject().put("database", database))
+                .thenApply(o -> new AggregatedDatabase(database, o.getJSONObject(database), key, value, casing));
+    }
+
+    @Override
+    public CompletableFuture<AggregatedDatabase> filter(String database, String key, long value, NumberFilter filter) {
+        return send(new JSONObject().put("database", database))
+                .thenApply(o -> new AggregatedDatabase(database, o.getJSONObject(database), key, value, filter));
+    }
+
+    @Override
+    public CompletableFuture<AggregatedDatabase> filter(String database, String key, double value, NumberFilter filter) {
+        return send(new JSONObject().put("database", database))
+                .thenApply(o -> new AggregatedDatabase(database, o.getJSONObject(database), key, value, filter));
+    }
+
+    @Override
+    public <T> CompletableFuture<AggregatedDatabase> filter(String database, String key, T value) {
+        return send(new JSONObject().put("database", database))
+                .thenApply(o -> new AggregatedDatabase(database, o.getJSONObject(database), key, value));
+    }
+
+    @Override
+    public CompletableFuture<AggregatedDatabase> filter(String database, String key, int value, NumberFilter filter) {
+        return send(new JSONObject().put("database", database))
+                .thenApply(o -> new AggregatedDatabase(database, o.getJSONObject(database), key, value, filter));
+    }
+
+    @Override
+    public CompletableFuture<AggregatedDatabase> filter(String database, String key, boolean value) {
+        return send(new JSONObject().put("database", database))
+                .thenApply(o -> new AggregatedDatabase(database, o.getJSONObject(database), key, value));
+    }
+
+    @Override
     public CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, String value, FilterCasing casing) {
         return send(new JSONObject().put("database", database).put("collection", collection))
                 .thenApply(o -> new AggregatedCollection(collection, o.getJSONObject(collection), key, value, casing));

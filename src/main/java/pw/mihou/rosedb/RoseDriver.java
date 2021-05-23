@@ -43,6 +43,70 @@ public interface RoseDriver {
      * Finds a list of all objects that has the key and value inside a database and collection.
      * This utilizes aggregation methods.
      * @param database the database to find on.
+     * @param key the key to check.
+     * @param value the value to search for on the objects.
+     * @param casing whether to ignore casing or not.
+     * @return Filtered Aggregated Collection.
+     */
+    CompletableFuture<AggregatedDatabase> filter(String database, String key, String value, FilterCasing casing);
+
+    /**
+     * Finds a list of all objects that has the key and value inside a database and collection.
+     * This utilizes aggregation methods.
+     * @param database the database to find on.
+     * @param key the key to check.
+     * @param value the value to search for on the objects.
+     * @param filter The filter to use.
+     * @return Filtered Aggregated Collection.
+     */
+    CompletableFuture<AggregatedDatabase> filter(String database, String key, long value, NumberFilter filter);
+
+    /**
+     * Finds a list of all objects that has the key and value inside a database and collection.
+     * This utilizes aggregation methods.
+     * @param database the database to find on.
+     * @param key the key to check.
+     * @param value the value to search for on the objects.
+     * @param filter The filter to use.
+     * @return Filtered AggregatedDatabase
+     */
+    CompletableFuture<AggregatedDatabase> filter(String database, String key, double value, NumberFilter filter);
+
+    /**
+     * Finds a list of all objects that has the key and value inside a database and collection.
+     * This utilizes aggregation methods.
+     * @param database the database to find on.
+     * @param key the key to check.
+     * @param value the value to search for on the objects.
+     * @return Filtered AggregatedDatabase
+     */
+    <T> CompletableFuture<AggregatedDatabase> filter(String database, String key, T value);
+
+    /**
+     * Finds a list of all objects that has the key and value inside a database and collection.
+     * This utilizes aggregation methods.
+     * @param database the database to find on.
+     * @param key the key to check.
+     * @param value the value to search for on the objects.
+     * @param filter The filter to use.
+     * @return Filtered AggregatedDatabase
+     */
+    CompletableFuture<AggregatedDatabase> filter(String database, String key, int value, NumberFilter filter);
+
+    /**
+     * Finds a list of all objects that has the key and value inside a database and collection.
+     * This utilizes aggregation methods.
+     * @param database the database to find on.
+     * @param key the key to check.
+     * @param value the value to search for on the objects.
+     * @return Filtered AggregatedDatabase
+     */
+    CompletableFuture<AggregatedDatabase> filter(String database, String key, boolean value);
+
+    /**
+     * Finds a list of all objects that has the key and value inside a database and collection.
+     * This utilizes aggregation methods.
+     * @param database the database to find on.
      * @param collection the collection to find.
      * @param key the key to check.
      * @param value the value to search for on the objects.

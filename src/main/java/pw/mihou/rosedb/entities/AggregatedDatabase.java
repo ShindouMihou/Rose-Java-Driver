@@ -1,6 +1,8 @@
 package pw.mihou.rosedb.entities;
 
 import org.json.JSONObject;
+import pw.mihou.rosedb.enums.FilterCasing;
+import pw.mihou.rosedb.enums.NumberFilter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,36 @@ public class AggregatedDatabase {
     public AggregatedDatabase(String name, JSONObject o){
         this.name = name;
         o.keySet().forEach(s -> collectionList.add(new AggregatedCollection(s, o.getJSONObject(s))));
+    }
+
+    public AggregatedDatabase(String name, JSONObject o, String key, String value, FilterCasing casing){
+        this.name = name;
+        o.keySet().forEach(s -> collectionList.add(new AggregatedCollection(s, o.getJSONObject(s), key, value, casing)));
+    }
+
+    public AggregatedDatabase(String name, JSONObject o, String key, int value, NumberFilter filter){
+        this.name = name;
+        o.keySet().forEach(s -> collectionList.add(new AggregatedCollection(s, o.getJSONObject(s), key, value, filter)));
+    }
+
+    public AggregatedDatabase(String name, JSONObject o, String key, long value, NumberFilter filter){
+        this.name = name;
+        o.keySet().forEach(s -> collectionList.add(new AggregatedCollection(s, o.getJSONObject(s), key, value, filter)));
+    }
+
+    public AggregatedDatabase(String name, JSONObject o, String key, double value, NumberFilter filter){
+        this.name = name;
+        o.keySet().forEach(s -> collectionList.add(new AggregatedCollection(s, o.getJSONObject(s), key, value, filter)));
+    }
+
+    public AggregatedDatabase(String name, JSONObject o, String key, boolean value){
+        this.name = name;
+        o.keySet().forEach(s -> collectionList.add(new AggregatedCollection(s, o.getJSONObject(s), key, value)));
+    }
+
+    public <T> AggregatedDatabase(String name, JSONObject o, String key, T value){
+        this.name = name;
+        o.keySet().forEach(s -> collectionList.add(new AggregatedCollection(s, o.getJSONObject(s), key, value)));
     }
 
     /**
