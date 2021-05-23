@@ -6,6 +6,8 @@ import pw.mihou.rosedb.RoseDriver;
 import pw.mihou.rosedb.clients.MainClient;
 import pw.mihou.rosedb.entities.AggregatedCollection;
 import pw.mihou.rosedb.entities.AggregatedDatabase;
+import pw.mihou.rosedb.enums.FilterCasing;
+import pw.mihou.rosedb.enums.NumberFilter;
 import pw.mihou.rosedb.exceptions.FailedAuthorizationException;
 import pw.mihou.rosedb.exceptions.FileDeletionException;
 import pw.mihou.rosedb.exceptions.FileModificationException;
@@ -15,7 +17,6 @@ import java.net.URI;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import java.util.stream.Collectors;
 
 public class RoseDriverImpl implements RoseDriver {
 
@@ -45,6 +46,42 @@ public class RoseDriverImpl implements RoseDriver {
     public CompletableFuture<AggregatedCollection> aggregate(String database, String collection) {
         return send(new JSONObject().put("database", database).put("collection", collection))
                 .thenApply(o -> new AggregatedCollection(collection, o.getJSONObject(collection)));
+    }
+
+    @Override
+    public CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, String value, FilterCasing casing) {
+        return send(new JSONObject().put("database", database).put("collection", collection))
+                .thenApply(o -> new AggregatedCollection(collection, o.getJSONObject(collection), key, value, casing));
+    }
+
+    @Override
+    public CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, long value, NumberFilter filter) {
+        return send(new JSONObject().put("database", database).put("collection", collection))
+                .thenApply(o -> new AggregatedCollection(collection, o.getJSONObject(collection), key, value, filter));
+    }
+
+    @Override
+    public CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, double value, NumberFilter filter) {
+        return send(new JSONObject().put("database", database).put("collection", collection))
+                .thenApply(o -> new AggregatedCollection(collection, o.getJSONObject(collection), key, value, filter));
+    }
+
+    @Override
+    public <T> CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, T value) {
+        return send(new JSONObject().put("database", database).put("collection", collection))
+                .thenApply(o -> new AggregatedCollection(collection, o.getJSONObject(collection), key, value));
+    }
+
+    @Override
+    public CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, int value, NumberFilter filter) {
+        return send(new JSONObject().put("database", database).put("collection", collection))
+                .thenApply(o -> new AggregatedCollection(collection, o.getJSONObject(collection), key, value, filter));
+    }
+
+    @Override
+    public CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, boolean value) {
+        return send(new JSONObject().put("database", database).put("collection", collection))
+                .thenApply(o -> new AggregatedCollection(collection, o.getJSONObject(collection), key, value));
     }
 
     @Override

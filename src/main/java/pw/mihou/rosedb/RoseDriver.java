@@ -3,8 +3,9 @@ package pw.mihou.rosedb;
 import org.json.JSONObject;
 import pw.mihou.rosedb.entities.AggregatedCollection;
 import pw.mihou.rosedb.entities.AggregatedDatabase;
+import pw.mihou.rosedb.enums.FilterCasing;
+import pw.mihou.rosedb.enums.NumberFilter;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -37,6 +38,76 @@ public interface RoseDriver {
      * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
     CompletableFuture<AggregatedCollection> aggregate(String database, String collection);
+
+    /**
+     * Finds a list of all objects that has the key and value inside a database and collection.
+     * This utilizes aggregation methods.
+     * @param database the database to find on.
+     * @param collection the collection to find.
+     * @param key the key to check.
+     * @param value the value to search for on the objects.
+     * @param casing whether to ignore casing or not.
+     * @return Filtered Aggregated Collection.
+     */
+    CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, String value, FilterCasing casing);
+
+    /**
+     * Finds a list of all objects that has the key and value inside a database and collection.
+     * This utilizes aggregation methods.
+     * @param database the database to find on.
+     * @param collection the collection to find.
+     * @param key the key to check.
+     * @param value the value to search for on the objects.
+     * @param filter The filter to use.
+     * @return Filtered Aggregated Collection.
+     */
+    CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, long value, NumberFilter filter);
+
+    /**
+     * Finds a list of all objects that has the key and value inside a database and collection.
+     * This utilizes aggregation methods.
+     * @param database the database to find on.
+     * @param collection the collection to find.
+     * @param key the key to check.
+     * @param value the value to search for on the objects.
+     * @param filter The filter to use.
+     * @return Filtered Aggregated Collection.
+     */
+    CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, double value, NumberFilter filter);
+
+    /**
+     * Finds a list of all objects that has the key and value inside a database and collection.
+     * This utilizes aggregation methods.
+     * @param database the database to find on.
+     * @param collection the collection to find.
+     * @param key the key to check.
+     * @param value the value to search for on the objects.
+     * @return Filtered Aggregated Collection.
+     */
+    <T> CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, T value);
+
+    /**
+     * Finds a list of all objects that has the key and value inside a database and collection.
+     * This utilizes aggregation methods.
+     * @param database the database to find on.
+     * @param collection the collection to find.
+     * @param key the key to check.
+     * @param value the value to search for on the objects.
+     * @param filter The filter to use.
+     * @return Filtered Aggregated Collection.
+     */
+    CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, int value, NumberFilter filter);
+
+    /**
+     * Finds a list of all objects that has the key and value inside a database and collection.
+     * This utilizes aggregation methods.
+     * @param database the database to find on.
+     * @param collection the collection to find.
+     * @param key the key to check.
+     * @param value the value to search for on the objects.
+     * @return Filtered Aggregated Collection.
+     */
+    CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, boolean value);
 
     /**
      * Adds an item to the database with the usage of JSONObject
