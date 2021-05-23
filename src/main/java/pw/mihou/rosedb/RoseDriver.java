@@ -1,7 +1,10 @@
 package pw.mihou.rosedb;
 
 import org.json.JSONObject;
+import pw.mihou.rosedb.entities.AggregatedCollection;
+import pw.mihou.rosedb.entities.AggregatedDatabase;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -18,6 +21,22 @@ public interface RoseDriver {
      * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
     CompletableFuture<JSONObject> get(String database, String collection, String identifier);
+
+    /**
+     * Retrieves all data from the database including collections.
+     * @param database the database holding the data.
+     * @return AggregatedCollection.
+     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
+     */
+    CompletableFuture<AggregatedDatabase> aggregate(String database);
+
+    /**
+     * Retrieves all data from a specific collecton in a specific database.
+     * @param database the database holding the data.
+     * @return AggregatedDatabase.
+     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
+     */
+    CompletableFuture<AggregatedCollection> aggregate(String database, String collection);
 
     /**
      * Adds an item to the database with the usage of JSONObject

@@ -4,17 +4,18 @@ import org.java_websocket.client.WebSocketClient;
 import org.json.JSONObject;
 import pw.mihou.rosedb.RoseDriver;
 import pw.mihou.rosedb.clients.MainClient;
+import pw.mihou.rosedb.entities.AggregatedCollection;
+import pw.mihou.rosedb.entities.AggregatedDatabase;
 import pw.mihou.rosedb.exceptions.FailedAuthorizationException;
 import pw.mihou.rosedb.exceptions.FileDeletionException;
 import pw.mihou.rosedb.exceptions.FileModificationException;
 import pw.mihou.rosedb.manager.ResponseManager;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.stream.Collectors;
 
 public class RoseDriverImpl implements RoseDriver {
 
@@ -32,6 +33,18 @@ public class RoseDriverImpl implements RoseDriver {
         return send(new JSONObject().put("collection", collection)
                 .put("identifier", identifier), "get", database)
                 .thenApply(jsonObject -> new JSONObject(jsonObject.getString("response")));
+    }
+
+    @Override
+    public CompletableFuture<AggregatedDatabase> aggregate(String database) {
+        return send(new JSONObject().put("database", database))
+                .thenApply(o -> new AggregatedDatabase(database, o.getJSONObject(database)));
+    }
+
+    @Override
+    public CompletableFuture<AggregatedCollection> aggregate(String database, String collection) {
+        return send(new JSONObject().put("database", database).put("collection", collection))
+                .thenApply(o -> new AggregatedCollection(collection, o.getJSONObject(collection)));
     }
 
     @Override
@@ -75,6 +88,27 @@ public class RoseDriverImpl implements RoseDriver {
         return send(new JSONObject().put("identifier", identifier).put("key", new ArrayList<>(map.keySet())).put("value", new ArrayList<>(map.values()))
                 .put("collection", collection), "update", database)
                 .thenApply(jsonObject -> new JSONObject(jsonObject.getString("response")));
+    }
+
+    private CompletableFuture<JSONObject> send(JSONObject request){
+        String unique = UUID.randomUUID().toString();
+        return CompletableFuture.runAsync(() -> {
+            client.send(request.put("authorization", authentication)
+                    .put("method", "aggregate").put("unique", unique).toString());
+
+            int i = 0;
+            // If you have any better way of getting responses, please edit.
+            while(ResponseManager.isNull(unique) && i < 30){
+                try { i++; Thread.sleep(5); } catch (InterruptedException ignored) {}
+            }
+        }).thenApply(unused -> {
+            JSONObject response = new JSONObject(ResponseManager.get(unique));
+            if(response.getInt("kode") != 1) {
+                throw new CompletionException(new FailedAuthorizationException(response.getString("response")));
+            }
+
+            return response;
+        });
     }
 
     private CompletableFuture<JSONObject> send(JSONObject request, String method, String database){

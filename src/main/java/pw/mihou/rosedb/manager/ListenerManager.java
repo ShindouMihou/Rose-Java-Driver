@@ -13,7 +13,7 @@ public class ListenerManager {
     private static final List<Listener> listeners = new ArrayList<>();
 
     public static void pass(JSONObject response){
-        if(!response.isNull("response") && !response.isNull("kode") && !response.isNull("replyTo")){
+        if(!response.isNull("kode") && !response.isNull("replyTo")){
             listeners.stream().filter(listener -> listener.type() == Listening.RECEIVE).forEach(listener -> listener.execute(response));
         }
     }
