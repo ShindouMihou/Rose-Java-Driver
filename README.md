@@ -104,7 +104,8 @@ driver.add("rose_db", "rose_collection", "identification", new JSONObject().put(
 
 ## Exceptions
 
-There are only two exceptions that the driver will throw and that is: `FileModificationException` and `FileDeletionException` which both are explanatory.
+There are only two exceptions that the driver will throw and that is: `FailedAuthorizationException`, `FileModificationException` and `FileDeletionException` which are all are explanatory.
+* `FailedAuthorizationException` is used to indicate that the authorization code used on `RoseDriver` is invalid, might need to check `config.json` for the correct one.
 * `FileModificationException` is used to indicate that an exception occurred with the most likely cause being a file being open while modification was occurring.
 * `FileDeletionException` is used to indicate that an exception occurred with the most likely cause being a file being open while deletion was occurring.
 
