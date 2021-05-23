@@ -31,7 +31,7 @@ CompletableFuture<JSONObject> get(String database, String collection, String ide
 * Aggregating of database and collection.
 */
 CompletableFuture<AggregatedCollection> aggregate(String database, String collection);
-CompletableFuture<AggregatedCollection> aggregate(String database);
+CompletableFuture<AggregatedDatabase> aggregate(String database);
 
 /**
 * Adding of data (it will automatically create collection and database if it doesn't exist)
@@ -65,12 +65,12 @@ CompletableFuture<AggregatedDatabase> filter(String database, String key, T valu
 /**
 * Filtering of a specific database's collection.
 */
-CompletableFuture<AggregatedDatabase> filter(String database, String collection, String key, String value, FilterCasing casing);
-CompletableFuture<AggregatedDatabase> filter(String database, String collection, String key, int value, NumberFilter filter);
-CompletableFuture<AggregatedDatabase> filter(String database, String collection, String key, double value, NumberFilter filter);
-CompletableFuture<AggregatedDatabase> filter(String database, String collection, String key, long value, NumberFilter filter);
-CompletableFuture<AggregatedDatabase> filter(String database, String collection, String key, boolean value);
-CompletableFuture<AggregatedDatabase> filter(String database, String collection, String key, T value);
+CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, String value, FilterCasing casing);
+CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, int value, NumberFilter filter);
+CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, double value, NumberFilter filter);
+CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, long value, NumberFilter filter);
+CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, boolean value);
+CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, T value);
 ```
 
 ## Number Filters
