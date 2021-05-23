@@ -1,7 +1,7 @@
-# Rose-Java-Driver
+# RoseDB's Official Java Driver
 [![](https://jitpack.io/v/pw.mihou/Rose-Java-Driver.svg)](https://jitpack.io/#pw.mihou/Rose-Java-Driver)
 
-The official Java driver for RoseDB with simple implementations; this covers all of the functions of RoseDB as of writing from updating values to deleting, adding values to filtering and aggregation of database and collections. It basically has everything.
+The official Java driver for [RoseDB](https://github.com/ShindouMihou/RoseDB) with simple implementations; this covers all of the functions of RoseDB as of writing from updating values to deleting, adding values to filtering and aggregation of database and collections. It basically has everything.
 
 ## Important notes
 Please use **JAVA 11** since we do not support Java 8 anymore simply because it is too outdated.
@@ -18,6 +18,9 @@ RoseDriver driver = new RoseBuilder().build("127.0.0.1", 5995, "authentication")
 **Be sure to keep only one instance of the driver**
 
 After creating your Driver instance, you may opt to use any of the methods below:
+
+## Methods
+These are all the methods you can use with the driver.
 ```java
 /**
 * Retrieving of data.
@@ -68,6 +71,18 @@ CompletableFuture<AggregatedDatabase> filter(String database, String collection,
 CompletableFuture<AggregatedDatabase> filter(String database, String collection, String key, long value, NumberFilter filter);
 CompletableFuture<AggregatedDatabase> filter(String database, String collection, String key, boolean value);
 CompletableFuture<AggregatedDatabase> filter(String database, String collection, String key, T value);
+```
+
+## Number Filters
+This is used to filter numbers using the `filter()` method.
+```java
+EQUALS, GREATER_THAN, LESS_THAN, GREATER_OR_EQUALS, LESS_OR_EQUALS;
+```
+
+## FilterCasing
+This is used to filter strings using the `filter()` method.
+```java
+IGNORE_CASING, STRICT, IS_NOT_EQUALS_STRICT, IS_NOT_EQUALS_RELAXED;
 ```
 
 It is important that you handle the exceptions that will come out from the CompletableFuture as well, if there is ever one, an example of handling them is:
