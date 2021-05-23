@@ -85,6 +85,8 @@ This is used to filter strings using the `filter()` method.
 IGNORE_CASING, STRICT, IS_NOT_EQUALS_STRICT, IS_NOT_EQUALS_RELAXED;
 ```
 
+## Exception Handling
+
 It is important that you handle the exceptions that will come out from the CompletableFuture as well, if there is ever one, an example of handling them is:
 ```java
 driver.add("rose_db", "rose_collection", "identification", new JSONObject().put("someKey", "someValue"))
