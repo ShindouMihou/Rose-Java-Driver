@@ -157,8 +157,44 @@ public class RoseDriverImpl implements RoseDriver {
     }
 
     @Override
-    public CompletableFuture<JSONObject> update(String database, String collection, String identifier, Map<String, String> map) {
-        return send(new JSONObject().put("identifier", identifier).put("key", new ArrayList<>(map.keySet())).put("value", new ArrayList<>(map.values()))
+    public CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, int value) {
+        return send(new JSONObject().put("identifier", identifier).put("key", key).put("value", value)
+                .put("collection", collection), "update", database)
+                .thenApply(jsonObject -> new JSONObject(jsonObject.getString("response")));
+    }
+
+    @Override
+    public CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, boolean value) {
+        return send(new JSONObject().put("identifier", identifier).put("key", key).put("value", value)
+                .put("collection", collection), "update", database)
+                .thenApply(jsonObject -> new JSONObject(jsonObject.getString("response")));
+    }
+
+    @Override
+    public CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, double value) {
+        return send(new JSONObject().put("identifier", identifier).put("key", key).put("value", value)
+                .put("collection", collection), "update", database)
+                .thenApply(jsonObject -> new JSONObject(jsonObject.getString("response")));
+    }
+
+    @Override
+    public CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, long value) {
+        return send(new JSONObject().put("identifier", identifier).put("key", key).put("value", value)
+                .put("collection", collection), "update", database)
+                .thenApply(jsonObject -> new JSONObject(jsonObject.getString("response")));
+    }
+
+    @Override
+    public CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, Object value) {
+        return send(new JSONObject().put("identifier", identifier).put("key", key).put("value", value)
+                .put("collection", collection), "update", database)
+                .thenApply(jsonObject -> new JSONObject(jsonObject.getString("response")));
+    }
+
+    @Override
+    public CompletableFuture<JSONObject> update(String database, String collection, String identifier, Map<String, ?> map) {
+        return send(new JSONObject().put("identifier", identifier).put("key", new ArrayList<>(map.keySet()))
+                .put("value", new ArrayList<>(map.values()))
                 .put("collection", collection), "update", database)
                 .thenApply(jsonObject -> new JSONObject(jsonObject.getString("response")));
     }

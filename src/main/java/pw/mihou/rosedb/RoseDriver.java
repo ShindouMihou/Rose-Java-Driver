@@ -242,6 +242,72 @@ public interface RoseDriver {
      */
     CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, String value);
 
+
+    /**
+     * Updates a key-value item (it will also add if it doesn't exist).
+     * @param database the database holding the data.
+     * @param collection the collection holding the data.
+     * @param identifier the identifier of the data.
+     * @param key the key that will be paired with the value.
+     * @param value the value that will be paired with the key.
+     * @return the updated data in the form of an JSONObject.
+     * @throws pw.mihou.rosedb.exceptions.FileModificationException if the server failed to update the item.
+     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
+     */
+    CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, int value);
+
+    /**
+     * Updates a key-value item (it will also add if it doesn't exist).
+     * @param database the database holding the data.
+     * @param collection the collection holding the data.
+     * @param identifier the identifier of the data.
+     * @param key the key that will be paired with the value.
+     * @param value the value that will be paired with the key.
+     * @return the updated data in the form of an JSONObject.
+     * @throws pw.mihou.rosedb.exceptions.FileModificationException if the server failed to update the item.
+     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
+     */
+    CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, boolean value);
+
+    /**
+     * Updates a key-value item (it will also add if it doesn't exist).
+     * @param database the database holding the data.
+     * @param collection the collection holding the data.
+     * @param identifier the identifier of the data.
+     * @param key the key that will be paired with the value.
+     * @param value the value that will be paired with the key.
+     * @return the updated data in the form of an JSONObject.
+     * @throws pw.mihou.rosedb.exceptions.FileModificationException if the server failed to update the item.
+     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
+     */
+    CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, double value);
+
+    /**
+     * Updates a key-value item (it will also add if it doesn't exist).
+     * @param database the database holding the data.
+     * @param collection the collection holding the data.
+     * @param identifier the identifier of the data.
+     * @param key the key that will be paired with the value.
+     * @param value the value that will be paired with the key.
+     * @return the updated data in the form of an JSONObject.
+     * @throws pw.mihou.rosedb.exceptions.FileModificationException if the server failed to update the item.
+     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
+     */
+    CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, long value);
+
+    /**
+     * Updates a key-value item (it will also add if it doesn't exist).
+     * @param database the database holding the data.
+     * @param collection the collection holding the data.
+     * @param identifier the identifier of the data.
+     * @param key the key that will be paired with the value.
+     * @param value the value that will be paired with the key.
+     * @return the updated data in the form of an JSONObject.
+     * @throws pw.mihou.rosedb.exceptions.FileModificationException if the server failed to update the item.
+     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
+     */
+    CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, Object value);
+
     /**
      * Adds/updates/removes multiple key-value items to an data.
      * @param database the database holding the data.
@@ -252,6 +318,6 @@ public interface RoseDriver {
      * @throws pw.mihou.rosedb.exceptions.FileModificationException if the server failed to update the item.
      * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
-    CompletableFuture<JSONObject> update (String database, String collection, String identifier, Map<String, String> map);
+    CompletableFuture<JSONObject> update (String database, String collection, String identifier, Map<String, ?> map);
 
 }
