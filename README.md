@@ -1,7 +1,7 @@
-# Rose-Java-Driver
+# RoseDB's Official Java Driver
 [![](https://jitpack.io/v/pw.mihou/Rose-Java-Driver.svg)](https://jitpack.io/#pw.mihou/Rose-Java-Driver)
 
-The official Java driver for RoseDB with simple implementations; this covers all of the functions of RoseDB as of writing from updating values to deleting, adding values to filtering and aggregation of database and collections. It basically has everything.
+The official Java driver for [RoseDB](https://github.com/ShindouMihou/RoseDB) with simple implementations; this covers all of the functions of RoseDB as of writing from updating values to deleting, adding values to filtering and aggregation of database and collections. It basically has everything.
 
 ## Important notes
 Please use **JAVA 11** since we do not support Java 8 anymore simply because it is too outdated.
@@ -18,6 +18,9 @@ RoseDriver driver = new RoseBuilder().build("127.0.0.1", 5995, "authentication")
 **Be sure to keep only one instance of the driver**
 
 After creating your Driver instance, you may opt to use any of the methods below:
+
+## Methods
+These are all the methods you can use with the driver.
 ```java
 /**
 * Retrieving of data.
@@ -28,7 +31,7 @@ CompletableFuture<JSONObject> get(String database, String collection, String ide
 * Aggregating of database and collection.
 */
 CompletableFuture<AggregatedCollection> aggregate(String database, String collection);
-CompletableFuture<AggregatedCollection> aggregate(String database);
+CompletableFuture<AggregatedDatabase> aggregate(String database);
 
 /**
 * Adding of data (it will automatically create collection and database if it doesn't exist)
@@ -62,15 +65,32 @@ CompletableFuture<AggregatedDatabase> filter(String database, String key, T valu
 /**
 * Filtering of a specific database's collection.
 */
-CompletableFuture<AggregatedDatabase> filter(String database, String collection, String key, String value, FilterCasing casing);
-CompletableFuture<AggregatedDatabase> filter(String database, String collection, String key, int value, NumberFilter filter);
-CompletableFuture<AggregatedDatabase> filter(String database, String collection, String key, double value, NumberFilter filter);
-CompletableFuture<AggregatedDatabase> filter(String database, String collection, String key, long value, NumberFilter filter);
-CompletableFuture<AggregatedDatabase> filter(String database, String collection, String key, boolean value);
-CompletableFuture<AggregatedDatabase> filter(String database, String collection, String key, T value);
+CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, String value, FilterCasing casing);
+CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, int value, NumberFilter filter);
+CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, double value, NumberFilter filter);
+CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, long value, NumberFilter filter);
+CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, boolean value);
+CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, T value);
 ```
 
-It is important that you handle the exceptions that will come out from the CompletableFuture as well, if there is ever one, an example of handling them is:
+## Number Filters
+This is used to filter numbers using the `filter()` method.
+```java
+EQUALS, GREATER_THAN, LESS_THAN, GREATER_OR_EQUALS, LESS_OR_EQUALS;
+```
+
+## FilterCasing
+This is used to filter strings using the `filter()` method.
+```java
+IGNORE_CASING, STRICT, IS_NOT_EQUALS_STRICT, IS_NOT_EQUALS_RELAXED;
+```
+
+## Exception Handling
+
+It is important that you handle the exceptions that will come out from the CompletableFuture as well, if there is ever one.
+You can use the CompletableFuture method `exceptionally(...)` to handle the exceptions.
+
+An example of handling them is:
 ```java
 driver.add("rose_db", "rose_collection", "identification", new JSONObject().put("someKey", "someValue"))
   .thenAccept(reply -> System.out.println(reply))
@@ -84,7 +104,8 @@ driver.add("rose_db", "rose_collection", "identification", new JSONObject().put(
 
 ## Exceptions
 
-There are only two exceptions that the driver will throw and that is: `FileModificationException` and `FileDeletionException` which both are explanatory.
+There are only two exceptions that the driver will throw and that is: `FailedAuthorizationException`, `FileModificationException` and `FileDeletionException` which are all are explanatory.
+* `FailedAuthorizationException` is used to indicate that the authorization code used on `RoseDriver` is invalid, might need to check `config.json` for the correct one.
 * `FileModificationException` is used to indicate that an exception occurred with the most likely cause being a file being open while modification was occurring.
 * `FileDeletionException` is used to indicate that an exception occurred with the most likely cause being a file being open while deletion was occurring.
 
