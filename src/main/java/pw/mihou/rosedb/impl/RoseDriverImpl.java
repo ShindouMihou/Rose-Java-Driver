@@ -244,4 +244,9 @@ public class RoseDriverImpl implements RoseDriver {
             return response;
         });
     }
+
+    @Override
+    public void shutdown(){
+        client.close(200, "Client Requested Shutdown.");
+    }
 }

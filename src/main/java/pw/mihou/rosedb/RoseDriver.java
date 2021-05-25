@@ -320,4 +320,11 @@ public interface RoseDriver {
      */
     CompletableFuture<JSONObject> update (String database, String collection, String identifier, Map<String, ?> map);
 
+    /**
+     * Closes the client's connection with the server.
+     * This causes all requests afterwards to fail and could potentially cause
+     * NPES (NullPointerExceptions), though you should be able to close the
+     * client without having to call this since the client automatically closes it.
+     */
+    void shutdown();
 }
