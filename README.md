@@ -50,7 +50,12 @@ CompletableFuture<Boolean> removeDatabase(String database);
 * Updating of values.
 */
 CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, String value);
-CompletableFuture<JSONObject> update (String database, String collection, String identifier, Map<String, String> map);
+CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, int value);
+CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, long value);
+CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, double value);
+CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, boolean value);
+CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, Object value);
+CompletableFuture<JSONObject> update (String database, String collection, String identifier, Map<String, ?> map);
 
 /**
 * Filtering of a specific database's entire collections.
