@@ -17,6 +17,7 @@ public class MainClient extends WebSocketClient {
     @Override
     public void onOpen(ServerHandshake serverHandshake) {
         ListenerManager.addListener(new ReceiveListener());
+        ListenerManager.connect(serverHandshake);
     }
 
     @Override
@@ -27,6 +28,7 @@ public class MainClient extends WebSocketClient {
     @Override
     public void onClose(int i, String s, boolean b) {
         ListenerManager.removeListener(new ReceiveListener());
+        ListenerManager.close(i, s, b);
     }
 
     @Override

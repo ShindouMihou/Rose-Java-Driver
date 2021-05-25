@@ -23,6 +23,12 @@ public class ListenerManager {
         .put("httpStatus", handshake.getHttpStatus()).put("message", handshake.getHttpStatusMessage())));
     }
 
+    public static void close(int i, String s, boolean b){
+        // I don't know much about what i, s, b are so I will leave that there.
+        listeners.stream().filter(listener -> listener.type() == Listening.CLOSE)
+        .forEach(listener -> listener.execute(new JSONObject().put("i", i).put("s", s).put("b", b)));
+    }
+
     public static void addListener(Listener listener){
         listeners.add(listener);
     }
