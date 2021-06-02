@@ -2,6 +2,8 @@ package pw.mihou.rosedb.impl;
 
 import org.java_websocket.client.WebSocketClient;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pw.mihou.rosedb.RoseDriver;
 import pw.mihou.rosedb.clients.MainClient;
 import pw.mihou.rosedb.entities.AggregatedCollection;
@@ -9,24 +11,67 @@ import pw.mihou.rosedb.entities.AggregatedDatabase;
 import pw.mihou.rosedb.enums.FilterCasing;
 import pw.mihou.rosedb.enums.NumberFilter;
 import pw.mihou.rosedb.exceptions.FailedAuthorizationException;
+import pw.mihou.rosedb.exceptions.FailedConnectionException;
 import pw.mihou.rosedb.exceptions.FileDeletionException;
 import pw.mihou.rosedb.exceptions.FileModificationException;
+import pw.mihou.rosedb.io.Scheduler;
+import pw.mihou.rosedb.manager.RequestManager;
 import pw.mihou.rosedb.manager.ResponseManager;
 
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class RoseDriverImpl implements RoseDriver {
 
     private final String authentication;
     private final WebSocketClient client;
+    private final int timeout;
+    private final TimeUnit unit;
+    private boolean shutdown = false;
+    private static final Logger log = LoggerFactory.getLogger(RoseDriver.class);
 
-    public RoseDriverImpl(URI connection, String authentication){
+    public RoseDriverImpl(URI connection, String authentication, int timeout, TimeUnit unit){
         client = new MainClient(connection);
         this.authentication = authentication;
+        this.timeout = timeout;
+        this.unit = unit;
         client.connect();
+
+        Scheduler.schedule(() -> {
+            if(!((MainClient) client).isConnected) {
+                log.error("Failed to connect to {}, please check your debug console on RoseDB for more information.", connection.toString());
+                shutdown = true;
+            }
+        }, timeout, unit);
+    }
+
+    public RoseDriverImpl(URI connection, String authentication, boolean blocking, int timeout, TimeUnit unit) throws FailedConnectionException {
+        client = new MainClient(connection);
+        this.authentication = authentication;
+        this.timeout = timeout;
+        this.unit = unit;
+        if(blocking) {
+            try {
+                log.debug("Attempting to connect to {}...", connection.toString());
+                if (!client.connectBlocking(timeout, unit)) {
+                    log.error("Failed to connect to {}, please check your debug console on RoseDB for more information.", connection.toString());
+                    throw new FailedConnectionException("Failed to connect to " + connection.toString() + ", please check your debug console for RoseDB.");
+                }
+
+                if(!((MainClient) client).isConnected)
+                    throw new FailedConnectionException("Failed to connect to " + connection.toString() + ", please check your debug console for RoseDB.");
+
+            } catch (InterruptedException e) {
+                log.error("Failed to connect to {}: {}", connection.toString(), e.getMessage());
+                throw new FailedConnectionException("Failed to connect to " + connection.toString() + ": " + e.getMessage());
+            }
+        } else {
+            client.connect();
+        }
     }
 
     @Override
@@ -200,53 +245,117 @@ public class RoseDriverImpl implements RoseDriver {
     }
 
     private CompletableFuture<JSONObject> send(JSONObject request){
-        String unique = UUID.randomUUID().toString();
-        return CompletableFuture.runAsync(() -> {
-            client.send(request.put("authorization", authentication)
-                    .put("method", "aggregate").put("unique", unique).toString());
+        if(!shutdown) {
+            String unique = UUID.randomUUID().toString();
+            return CompletableFuture.runAsync(() -> {
+                client.send(request.put("authorization", authentication)
+                        .put("method", "aggregate").put("unique", unique).toString());
+                RequestManager.requests.add(unique);
 
-            int i = 0;
-            // If you have any better way of getting responses, please edit.
-            while(ResponseManager.isNull(unique) && i < 30){
-                try { i++; Thread.sleep(5); } catch (InterruptedException ignored) {}
-            }
-        }).thenApply(unused -> {
-            JSONObject response = new JSONObject(ResponseManager.get(unique));
-            if(response.getInt("kode") != 1) {
-                throw new CompletionException(new FailedAuthorizationException(response.getString("response")));
-            }
+                int i = 0;
+                // If you have any better way of getting responses, please edit.
+                while (ResponseManager.isNull(unique) && i < 30) {
+                    try {
+                        i++;
+                        Thread.sleep(5);
+                    } catch (InterruptedException ignored) {
+                    }
+                }
+            }).thenApply(unused -> {
+                JSONObject response = new JSONObject(ResponseManager.get(unique));
+                RequestManager.requests.remove(unique);
+                if (response.getInt("kode") != 1) {
+                    throw new CompletionException(new FailedAuthorizationException(response.getString("response")));
+                }
 
-            return response;
-        });
+                return response;
+            });
+        }
+        return CompletableFuture.supplyAsync(() -> new JSONObject().put("kode", -1));
     }
 
     private CompletableFuture<JSONObject> send(JSONObject request, String method, String database){
-        String unique = UUID.randomUUID().toString();
-        return CompletableFuture.runAsync(() -> {
-            client.send(request.put("authorization", authentication)
-                    .put("method", method).put("database", database).put("unique", unique).toString());
+        if(!shutdown) {
+            String unique = UUID.randomUUID().toString();
+            return CompletableFuture.runAsync(() -> {
+                client.send(request.put("authorization", authentication)
+                        .put("method", method).put("database", database).put("unique", unique).toString());
+                RequestManager.requests.add(unique);
+                System.out.println(unique + " has been sent");
 
-            int i = 0;
-            // If you have any better way of getting responses, please edit.
-            while(ResponseManager.isNull(unique) && i < 30){
-                try { i++; Thread.sleep(5); } catch (InterruptedException ignored) {}
-            }
-        }).thenApply(unused -> {
-            JSONObject response = new JSONObject(ResponseManager.get(unique));
-            if(response.getInt("kode") != 1) {
-                throw response.getString("response").equalsIgnoreCase("Please validate: correct authorization code or unique value on request.")
-                        ? new CompletionException(new FailedAuthorizationException(response.getString("response")))
-                        : (method.equalsIgnoreCase("delete") || method.equalsIgnoreCase("drop")
-                        ? new CompletionException(new FileDeletionException(response.getString("response")))
-                        : new CompletionException(new FileModificationException(response.getString("response"))));
-            }
+                int i = 0;
+                // If you have any better way of getting responses, please edit.
+                while (ResponseManager.isNull(unique) && i < 30) {
+                    try {
+                        i++;
+                        Thread.sleep(5);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).thenApply(unused -> {
+                JSONObject response = new JSONObject(ResponseManager.get(unique));
+                RequestManager.requests.remove(unique);
+                System.out.println(unique + " has finished.");
+                if (response.getInt("kode") != 1) {
+                    throw response.getString("response").equalsIgnoreCase("Please validate: correct authorization code or unique value on request.")
+                            ? new CompletionException(new FailedAuthorizationException(response.getString("response")))
+                            : (method.equalsIgnoreCase("delete") || method.equalsIgnoreCase("drop")
+                            ? new CompletionException(new FileDeletionException(response.getString("response")))
+                            : new CompletionException(new FileModificationException(response.getString("response"))));
+                }
 
-            return response;
-        });
+                return response;
+            });
+        }
+        return CompletableFuture.supplyAsync(() -> new JSONObject().put("kode", -1));
     }
 
     @Override
     public void shutdown(){
-        client.close(200, "Client Requested Shutdown.");
+        shutdown("The client requested a shutdown");
+    }
+
+    @Override
+    public void shutdown(String message){
+        shutdown = true;
+        if (!RequestManager.requests.isEmpty()) {
+            int i = 0;
+            while (!RequestManager.requests.isEmpty() && i < unit.toSeconds(timeout)) {
+                try {
+                    i++;
+                    System.out.printf("Waiting for requests: [%s] to complete...\n", String.join(", ", RequestManager.requests));
+                    log.info("Waiting for requests: [{}] to complete...", String.join(", ", RequestManager.requests));
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        log.info("The client is now closing down...");
+        client.close(1000, message);
+    }
+
+    @Override
+    public CompletableFuture<Void> shutdownAsync() {
+        return CompletableFuture.runAsync(() -> shutdown("The client requested a shutdown."));
+    }
+
+    @Override
+    public CompletableFuture<Void> shutdownAsync(String message) {
+        return CompletableFuture.runAsync(() -> shutdown(message));
+    }
+
+    @Override
+    public void forceShutdown() {
+        forceShutdown("The client requested a shutdown.");
+    }
+
+    @Override
+    public void forceShutdown(String message) {
+        shutdown = true;
+        log.debug("The client is now closing down...");
+        client.close(1000, message);
     }
 }

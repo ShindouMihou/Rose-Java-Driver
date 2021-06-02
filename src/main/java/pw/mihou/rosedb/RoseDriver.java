@@ -321,10 +321,64 @@ public interface RoseDriver {
     CompletableFuture<JSONObject> update (String database, String collection, String identifier, Map<String, ?> map);
 
     /**
-     * Closes the client's connection with the server.
+     * Performs a graceful close on the client's connection with the server.
+     * It waits for all the currently running requests to finish before closing the client.
+     * WARNING: This will block the thread.
+     *
      * This causes all requests afterwards to fail and could potentially cause
      * NPES (NullPointerExceptions), though you should be able to close the
      * client without having to call this since the client automatically closes it.
      */
     void shutdown();
+
+    /**
+     * Performs a graceful close on the client's connection with the server.
+     * It waits for all the currently running requests to finish before closing the client.
+     * WARNING: This will block the thread.
+     *
+     * This causes all requests afterwards to fail and could potentially cause
+     * NPES (NullPointerExceptions), though you should be able to close the
+     * client without having to call this since the client automatically closes it.
+     */
+    void shutdown(String message);
+
+    /**
+     * Performs a graceful close on the client's connection with the server.
+     * It waits for all the currently running requests to finish before closing the client.
+     *
+     * This causes all requests afterwards to fail and could potentially cause
+     * NPES (NullPointerExceptions), though you should be able to close the
+     * client without having to call this since the client automatically closes it.
+     */
+    CompletableFuture<Void> shutdownAsync();
+
+    /**
+     * Performs a graceful close on the client's connection with the server.
+     * It waits for all the currently running requests to finish before closing the client.
+     *
+     * This causes all requests afterwards to fail and could potentially cause
+     * NPES (NullPointerExceptions), though you should be able to close the
+     * client without having to call this since the client automatically closes it.
+     */
+    CompletableFuture<Void> shutdownAsync(String message);
+
+    /**
+     * Performs a forced close on the client's connection with the server.
+     * It waits for all the currently running requests to finish before closing the client.
+     *
+     * This causes all requests afterwards to fail and could potentially cause
+     * NPES (NullPointerExceptions), though you should be able to close the
+     * client without having to call this since the client automatically closes it.
+     */
+    void forceShutdown();
+
+    /**
+     * Performs a forced close on the client's connection with the server.
+     * It waits for all the currently running requests to finish before closing the client.
+     *
+     * This causes all requests afterwards to fail and could potentially cause
+     * NPES (NullPointerExceptions), though you should be able to close the
+     * client without having to call this since the client automatically closes it.
+     */
+    void forceShutdown(String message);
 }
