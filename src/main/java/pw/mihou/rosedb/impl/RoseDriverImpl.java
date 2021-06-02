@@ -281,7 +281,6 @@ public class RoseDriverImpl implements RoseDriver {
                 client.send(request.put("authorization", authentication)
                         .put("method", method).put("database", database).put("unique", unique).toString());
                 RequestManager.requests.add(unique);
-                System.out.println(unique + " has been sent");
 
                 int i = 0;
                 // If you have any better way of getting responses, please edit.
@@ -296,7 +295,6 @@ public class RoseDriverImpl implements RoseDriver {
             }).thenApply(unused -> {
                 JSONObject response = new JSONObject(ResponseManager.get(unique));
                 RequestManager.requests.remove(unique);
-                System.out.println(unique + " has finished.");
                 if (response.getInt("kode") != 1) {
                     throw response.getString("response").equalsIgnoreCase("Please validate: correct authorization code or unique value on request.")
                             ? new CompletionException(new FailedAuthorizationException(response.getString("response")))
@@ -324,7 +322,6 @@ public class RoseDriverImpl implements RoseDriver {
             while (!RequestManager.requests.isEmpty() && i < unit.toSeconds(timeout)) {
                 try {
                     i++;
-                    System.out.printf("Waiting for requests: [%s] to complete...\n", String.join(", ", RequestManager.requests));
                     log.info("Waiting for requests: [{}] to complete...", String.join(", ", RequestManager.requests));
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
