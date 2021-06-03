@@ -154,11 +154,11 @@ public class AggregatedCollection {
     }
 
     /**
-     * Returns the data in the form of (identifier -> JSONObject).
+     * Returns the data in the form of a map of the identifier and the json object. (Identifier, JSON)
      * The JSONObject holds all the key-values inside the identifier (or the object).
      * For example, user.rose has {"key":"value"}, the identifier would be "user" and
      * the object has the data within it: key which returns value.
-     * @return Map<Identifier, Data>
+     * @return a map containing the identifier and data.
      */
     public Map<String, JSONObject> getData(){
         return data;

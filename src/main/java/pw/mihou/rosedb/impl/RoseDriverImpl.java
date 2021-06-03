@@ -22,7 +22,6 @@ import java.net.URI;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class RoseDriverImpl implements RoseDriver {
@@ -178,6 +177,12 @@ public class RoseDriverImpl implements RoseDriver {
     public CompletableFuture<JSONObject> remove(String database, String collection, String identifier, String key) {
         return send(new JSONObject().put("collection", collection).put("identifier", identifier)
         .put("key", key), "delete", database).thenApply(jsonObject -> new JSONObject(jsonObject.getString("response")));
+    }
+
+    @Override
+    public CompletableFuture<JSONObject> remove(String database, String collection, String identifier, Collection<String> keys) {
+        return send(new JSONObject().put("collection", collection).put("identifier", identifier)
+                .put("key", keys), "delete", database).thenApply(jsonObject -> new JSONObject(jsonObject.getString("response")));
     }
 
     @Override

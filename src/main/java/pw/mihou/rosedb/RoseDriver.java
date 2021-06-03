@@ -5,7 +5,10 @@ import pw.mihou.rosedb.entities.AggregatedCollection;
 import pw.mihou.rosedb.entities.AggregatedDatabase;
 import pw.mihou.rosedb.enums.FilterCasing;
 import pw.mihou.rosedb.enums.NumberFilter;
+import pw.mihou.rosedb.exceptions.FailedAuthorizationException;
+import pw.mihou.rosedb.exceptions.FileModificationException;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -34,6 +37,7 @@ public interface RoseDriver {
     /**
      * Retrieves all data from a specific collecton in a specific database.
      * @param database the database holding the data.
+     * @param collection the collection holding the data.
      * @return AggregatedDatabase.
      * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
@@ -78,6 +82,7 @@ public interface RoseDriver {
      * @param database the database to find on.
      * @param key the key to check.
      * @param value the value to search for on the objects.
+     * @param <T> the object to return.
      * @return Filtered AggregatedDatabase
      */
     <T> CompletableFuture<AggregatedDatabase> filter(String database, String key, T value);
@@ -146,6 +151,7 @@ public interface RoseDriver {
      * @param collection the collection to find.
      * @param key the key to check.
      * @param value the value to search for on the objects.
+     * @param <T> the object to filter.
      * @return Filtered Aggregated Collection.
      */
     <T> CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, T value);
@@ -194,10 +200,22 @@ public interface RoseDriver {
      * @param identifier the identifier of the data.
      * @param key the key that will be removed.
      * @return the updated data in the form of an JSONObject.
-     * @throws pw.mihou.rosedb.exceptions.FileModificationException if the server failed to update the item.
-     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
+     * @throws FileModificationException if the server failed to update the item.
+     * @throws FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
     CompletableFuture<JSONObject> remove(String database, String collection, String identifier, String key);
+    /**
+     * Removes a key (and value) from an data (item).
+     * @param database the database holding the data.
+     * @param collection the collection holding the data.
+     * @param identifier the identifier of the data.
+     * @param keys the keys that will be removed.
+     * @return the updated data in the form of an JSONObject.
+     * @throws FileModificationException if the server failed to update the item.
+     * @throws FailedAuthorizationException throws authorization exception if authentication code is invalid.
+     */
+    CompletableFuture<JSONObject> remove(String database, String collection, String identifier, Collection<String> keys);
+
 
     /**
      * Removes an item from the database.
@@ -237,8 +255,8 @@ public interface RoseDriver {
      * @param key the key that will be paired with the value.
      * @param value the value that will be paired with the key.
      * @return the updated data in the form of an JSONObject.
-     * @throws pw.mihou.rosedb.exceptions.FileModificationException if the server failed to update the item.
-     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
+     * @throws FileModificationException if the server failed to update the item.
+     * @throws FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
     CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, String value);
 
@@ -251,8 +269,8 @@ public interface RoseDriver {
      * @param key the key that will be paired with the value.
      * @param value the value that will be paired with the key.
      * @return the updated data in the form of an JSONObject.
-     * @throws pw.mihou.rosedb.exceptions.FileModificationException if the server failed to update the item.
-     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
+     * @throws FileModificationException if the server failed to update the item.
+     * @throws FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
     CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, int value);
 
@@ -264,8 +282,8 @@ public interface RoseDriver {
      * @param key the key that will be paired with the value.
      * @param value the value that will be paired with the key.
      * @return the updated data in the form of an JSONObject.
-     * @throws pw.mihou.rosedb.exceptions.FileModificationException if the server failed to update the item.
-     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
+     * @throws FileModificationException if the server failed to update the item.
+     * @throws FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
     CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, boolean value);
 
@@ -277,8 +295,8 @@ public interface RoseDriver {
      * @param key the key that will be paired with the value.
      * @param value the value that will be paired with the key.
      * @return the updated data in the form of an JSONObject.
-     * @throws pw.mihou.rosedb.exceptions.FileModificationException if the server failed to update the item.
-     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
+     * @throws FileModificationException if the server failed to update the item.
+     * @throws FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
     CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, double value);
 
@@ -290,8 +308,8 @@ public interface RoseDriver {
      * @param key the key that will be paired with the value.
      * @param value the value that will be paired with the key.
      * @return the updated data in the form of an JSONObject.
-     * @throws pw.mihou.rosedb.exceptions.FileModificationException if the server failed to update the item.
-     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
+     * @throws FileModificationException if the server failed to update the item.
+     * @throws FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
     CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, long value);
 
@@ -303,8 +321,8 @@ public interface RoseDriver {
      * @param key the key that will be paired with the value.
      * @param value the value that will be paired with the key.
      * @return the updated data in the form of an JSONObject.
-     * @throws pw.mihou.rosedb.exceptions.FileModificationException if the server failed to update the item.
-     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
+     * @throws FileModificationException if the server failed to update the item.
+     * @throws FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
     CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, Object value);
 
@@ -315,8 +333,8 @@ public interface RoseDriver {
      * @param identifier the identifier of the data.
      * @param map a map of key-value pairs.
      * @return the updated data in the form of an JSONObject.
-     * @throws pw.mihou.rosedb.exceptions.FileModificationException if the server failed to update the item.
-     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
+     * @throws FileModificationException if the server failed to update the item.
+     * @throws FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
     CompletableFuture<JSONObject> update (String database, String collection, String identifier, Map<String, ?> map);
 
@@ -339,6 +357,7 @@ public interface RoseDriver {
      * This causes all requests afterwards to fail and could potentially cause
      * NPES (NullPointerExceptions), though you should be able to close the
      * client without having to call this since the client automatically closes it.
+     * @param message The message to send to the server.
      */
     void shutdown(String message);
 
@@ -349,6 +368,7 @@ public interface RoseDriver {
      * This causes all requests afterwards to fail and could potentially cause
      * NPES (NullPointerExceptions), though you should be able to close the
      * client without having to call this since the client automatically closes it.
+     * @return CompletableFuture to handle.
      */
     CompletableFuture<Void> shutdownAsync();
 
@@ -359,6 +379,8 @@ public interface RoseDriver {
      * This causes all requests afterwards to fail and could potentially cause
      * NPES (NullPointerExceptions), though you should be able to close the
      * client without having to call this since the client automatically closes it.
+     * @param message The message to send to the server.
+     * @return CompletableFuture to handle.
      */
     CompletableFuture<Void> shutdownAsync(String message);
 
@@ -379,6 +401,7 @@ public interface RoseDriver {
      * This causes all requests afterwards to fail and could potentially cause
      * NPES (NullPointerExceptions), though you should be able to close the
      * client without having to call this since the client automatically closes it.
+     * @param message The message to send to the server.
      */
     void forceShutdown(String message);
 }
