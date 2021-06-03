@@ -39,6 +39,7 @@ public class RoseDriverImpl implements RoseDriver {
         this.authentication = authentication;
         this.timeout = timeout;
         this.unit = unit;
+        client.addHeader("authorization", authentication);
         client.connect();
 
         Scheduler.schedule(() -> {
@@ -54,6 +55,7 @@ public class RoseDriverImpl implements RoseDriver {
         this.authentication = authentication;
         this.timeout = timeout;
         this.unit = unit;
+        client.addHeader("authorization", authentication);
         if(blocking) {
             try {
                 log.debug("Attempting to connect to {}...", connection.toString());
@@ -248,8 +250,7 @@ public class RoseDriverImpl implements RoseDriver {
         if(!shutdown) {
             String unique = UUID.randomUUID().toString();
             return CompletableFuture.runAsync(() -> {
-                client.send(request.put("authorization", authentication)
-                        .put("method", "aggregate").put("unique", unique).toString());
+                client.send(request.put("method", "aggregate").put("unique", unique).toString());
                 RequestManager.requests.add(unique);
 
                 int i = 0;
@@ -262,6 +263,9 @@ public class RoseDriverImpl implements RoseDriver {
                     }
                 }
             }).thenApply(unused -> {
+                if(ResponseManager.isNull(unique))
+                    throw new CompletionException(new FailedAuthorizationException("Please validate: correct authorization code or unique value on request."));
+
                 JSONObject response = new JSONObject(ResponseManager.get(unique));
                 RequestManager.requests.remove(unique);
                 if (response.getInt("kode") != 1) {
@@ -278,7 +282,7 @@ public class RoseDriverImpl implements RoseDriver {
         if(!shutdown) {
             String unique = UUID.randomUUID().toString();
             return CompletableFuture.runAsync(() -> {
-                client.send(request.put("authorization", authentication)
+                client.send(request
                         .put("method", method).put("database", database).put("unique", unique).toString());
                 RequestManager.requests.add(unique);
 
@@ -293,6 +297,10 @@ public class RoseDriverImpl implements RoseDriver {
                     }
                 }
             }).thenApply(unused -> {
+                // There is only one response when the value is null.
+                if(ResponseManager.isNull(unique))
+                    throw new CompletionException(new FailedAuthorizationException("Please validate: correct authorization code or unique value on request."));
+
                 JSONObject response = new JSONObject(ResponseManager.get(unique));
                 RequestManager.requests.remove(unique);
                 if (response.getInt("kode") != 1) {
