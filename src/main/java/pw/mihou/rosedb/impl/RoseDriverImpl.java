@@ -60,98 +60,98 @@ public class RoseDriverImpl implements RoseDriver {
     @Override
     public CompletableFuture<AggregatedDatabase> aggregate(String database) {
         return send(new JSONObject().put("database", database))
-                .thenApply(RosePayload::asJSONObject).thenApply(o -> o.orElse(new JSONObject()))
+                .thenApply(RosePayload::asJSONObject)
                 .thenApply(o -> new AggregatedDatabase(database, o.getJSONObject(database)));
     }
 
     @Override
     public CompletableFuture<AggregatedCollection> aggregate(String database, String collection) {
         return send(new JSONObject().put("database", database).put("collection", collection))
-                .thenApply(RosePayload::asJSONObject).thenApply(o -> o.orElse(new JSONObject()))
+                .thenApply(RosePayload::asJSONObject)
                 .thenApply(o -> new AggregatedCollection(collection, o.getJSONObject(collection)));
     }
 
     @Override
     public CompletableFuture<AggregatedDatabase> filter(String database, String key, String value, FilterCasing casing) {
         return send(new JSONObject().put("database", database))
-                .thenApply(RosePayload::asJSONObject).thenApply(o -> o.orElse(new JSONObject()))
+                .thenApply(RosePayload::asJSONObject)
                 .thenApply(o -> new AggregatedDatabase(database, o.getJSONObject(database), key, value, casing));
     }
 
     @Override
     public CompletableFuture<AggregatedDatabase> filter(String database, String key, long value, NumberFilter filter) {
         return send(new JSONObject().put("database", database))
-                .thenApply(RosePayload::asJSONObject).thenApply(o -> o.orElse(new JSONObject()))
+                .thenApply(RosePayload::asJSONObject)
                 .thenApply(o -> new AggregatedDatabase(database, o.getJSONObject(database), key, value, filter));
     }
 
     @Override
     public CompletableFuture<AggregatedDatabase> filter(String database, String key, double value, NumberFilter filter) {
         return send(new JSONObject().put("database", database))
-                .thenApply(RosePayload::asJSONObject).thenApply(o -> o.orElse(new JSONObject()))
+                .thenApply(RosePayload::asJSONObject)
                 .thenApply(o -> new AggregatedDatabase(database, o.getJSONObject(database), key, value, filter));
     }
 
     @Override
     public <T> CompletableFuture<AggregatedDatabase> filter(String database, String key, T value) {
         return send(new JSONObject().put("database", database))
-                .thenApply(RosePayload::asJSONObject).thenApply(o -> o.orElse(new JSONObject()))
+                .thenApply(RosePayload::asJSONObject)
                 .thenApply(o -> new AggregatedDatabase(database, o.getJSONObject(database), key, value));
     }
 
     @Override
     public CompletableFuture<AggregatedDatabase> filter(String database, String key, int value, NumberFilter filter) {
         return send(new JSONObject().put("database", database))
-                .thenApply(RosePayload::asJSONObject).thenApply(o -> o.orElse(new JSONObject()))
+                .thenApply(RosePayload::asJSONObject)
                 .thenApply(o -> new AggregatedDatabase(database, o.getJSONObject(database), key, value, filter));
     }
 
     @Override
     public CompletableFuture<AggregatedDatabase> filter(String database, String key, boolean value) {
         return send(new JSONObject().put("database", database))
-                .thenApply(RosePayload::asJSONObject).thenApply(o -> o.orElse(new JSONObject()))
+                .thenApply(RosePayload::asJSONObject)
                 .thenApply(o -> new AggregatedDatabase(database, o.getJSONObject(database), key, value));
     }
 
     @Override
     public CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, String value, FilterCasing casing) {
         return send(new JSONObject().put("database", database).put("collection", collection))
-                .thenApply(RosePayload::asJSONObject).thenApply(o -> o.orElse(new JSONObject()))
+                .thenApply(RosePayload::asJSONObject)
                 .thenApply(o -> new AggregatedCollection(collection, o.getJSONObject(collection), key, value, casing));
     }
 
     @Override
     public CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, long value, NumberFilter filter) {
         return send(new JSONObject().put("database", database).put("collection", collection))
-                .thenApply(RosePayload::asJSONObject).thenApply(o -> o.orElse(new JSONObject()))
+                .thenApply(RosePayload::asJSONObject)
                 .thenApply(o -> new AggregatedCollection(collection, o.getJSONObject(collection), key, value, filter));
     }
 
     @Override
     public CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, double value, NumberFilter filter) {
         return send(new JSONObject().put("database", database).put("collection", collection))
-                .thenApply(RosePayload::asJSONObject).thenApply(o -> o.orElse(new JSONObject()))
+                .thenApply(RosePayload::asJSONObject)
                 .thenApply(o -> new AggregatedCollection(collection, o.getJSONObject(collection), key, value, filter));
     }
 
     @Override
     public <T> CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, T value) {
         return send(new JSONObject().put("database", database).put("collection", collection))
-                .thenApply(RosePayload::asJSONObject).thenApply(o -> o.orElse(new JSONObject()))
+                .thenApply(RosePayload::asJSONObject)
                 .thenApply(o -> new AggregatedCollection(collection, o.getJSONObject(collection), key, value));
     }
 
     @Override
     public CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, int value, NumberFilter filter) {
         return send(new JSONObject().put("database", database).put("collection", collection))
-                .thenApply(RosePayload::asJSONObject).thenApply(o -> o.orElse(new JSONObject()))
+                .thenApply(RosePayload::asJSONObject)
                 .thenApply(o -> new AggregatedCollection(collection, o.getJSONObject(collection), key, value, filter));
     }
 
     @Override
     public CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, boolean value) {
         return send(new JSONObject().put("database", database).put("collection", collection))
-                .thenApply(RosePayload::asJSONObject).thenApply(o -> o.orElse(new JSONObject()))
+                .thenApply(RosePayload::asJSONObject)
                 .thenApply(o -> new AggregatedCollection(collection, o.getJSONObject(collection), key, value));
     }
 
