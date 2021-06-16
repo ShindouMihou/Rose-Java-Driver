@@ -2,6 +2,8 @@ package pw.mihou.rosedb.manager;
 
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pw.mihou.rosedb.enums.Listening;
 import pw.mihou.rosedb.listeners.interfaces.Listener;
 
@@ -11,6 +13,7 @@ import java.util.List;
 public class ListenerManager {
 
     private static final List<Listener> listeners = new ArrayList<>();
+    private static final Logger log = LoggerFactory.getLogger(ListenerManager.class);
 
     public static void pass(JSONObject response){
         if(!response.isNull("kode") && !response.isNull("replyTo")){
@@ -19,6 +22,7 @@ public class ListenerManager {
     }
 
     public static void connect(ServerHandshake handshake){
+        log.debug("Received a handshake from the server: {}, {}", handshake.getHttpStatus(), handshake.getHttpStatusMessage());
         listeners.stream().filter(listener -> listener.type() == Listening.OPEN).forEach(listener -> listener.execute(new JSONObject()
         .put("httpStatus", handshake.getHttpStatus()).put("message", handshake.getHttpStatusMessage())));
     }
