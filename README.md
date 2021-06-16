@@ -4,7 +4,7 @@
 The official Java driver for [RoseDB](https://github.com/ShindouMihou/RoseDB) with simple implementations; this covers all of the functions of RoseDB as of writing from updating values to deleting, adding values to filtering and aggregation of database and collections. It basically has everything.
 
 ## Important notes
-Please use **JAVA 11** since we do not support Java 8 anymore simply because it is too outdated.
+Please use **JAVA 11** or higher since we do not support Java 8 anymore simply because it is too outdated.
 
 ## How to get started?
 Assuming you have installed RoseDB onto a server or your own computer and also installed the driver onto your Java project (if you haven't please look at Installation section)
@@ -101,7 +101,10 @@ a method to transform it into the specified class with the help of GSON (and als
 
 An example of converting a response from Rose Payload to its class is:
 ```java
-public class Item { public String someKey; public String anotherKey; }
+public class Item { 
+	public String someKey;
+	public String anotherKey;
+}
 
 driver.get("database", "collection", "identifier").thenApply(payload -> payload.as(Item.class))
 .thenAccept(item -> System.out.println(item.someKey));
@@ -121,7 +124,7 @@ if(payload.getKode() == 1){
 The complicated part is to check the raw response itself whether it is null or empty.
 ```
 RosePayload payload = ...
-if(payload.getRaw() != null || !payload.getRaw().isEmpty() || !payload.getRaw().isBlank()){
+if(payload.getRaw() != null && !payload.getRaw().isEmpty() && !payload.getRaw().isBlank()){
 ... do something with the payload.
 }
 ```
