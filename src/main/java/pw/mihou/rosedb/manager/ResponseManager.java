@@ -10,6 +10,7 @@ public class ResponseManager {
     public static String get(String key){
         String t = responses.get(key);
         responses.remove(key);
+        RequestManager.requests.remove(key);
         return t;
     }
 

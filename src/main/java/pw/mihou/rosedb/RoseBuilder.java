@@ -23,7 +23,7 @@ public class RoseBuilder {
         return this;
     }
 
-    public RoseDriver buildAsync(String address, int port, String authentication) throws URISyntaxException {
+    public RoseDriver buildAsync(String address, int port, String authentication) throws URISyntaxException, FailedConnectionException {
         return new RoseDriverImpl(new URI(String.format(format, address, port)), authentication, timeout, unit);
     }
 

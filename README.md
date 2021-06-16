@@ -25,7 +25,7 @@ These are all the methods you can use with the driver.
 /**
 * Retrieving of data.
 */
-CompletableFuture<JSONObject> get(String database, String collection, String identifier);
+CompletableFuture<RosePayload> get(String database, String collection, String identifier);
 
 /**
 * Aggregating of database and collection.
@@ -36,12 +36,12 @@ CompletableFuture<AggregatedDatabase> aggregate(String database);
 /**
 * Adding of data (it will automatically create collection and database if it doesn't exist)
 */
-CompletableFuture<JSONObject> add(String database, String collection, String identifier, JSONObject document);
+CompletableFuture<RosePayload> add(String database, String collection, String identifier, JSONObject document);
 
 /**
 * Removing of databases, datas or collections.
 */
-CompletableFuture<JSONObject> remove(String database, String collection, String identifier, String key);
+CompletableFuture<Boolean> remove(String database, String collection, String identifier, String key);
 CompletableFuture<Boolean> remove(String database, String collection, String identifier);
 CompletableFuture<Boolean> removeCollection(String database, String collection);
 CompletableFuture<Boolean> removeDatabase(String database);
@@ -49,13 +49,13 @@ CompletableFuture<Boolean> removeDatabase(String database);
 /**
 * Updating of values.
 */
-CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, String value);
-CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, int value);
-CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, long value);
-CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, double value);
-CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, boolean value);
-CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, Object value);
-CompletableFuture<JSONObject> update (String database, String collection, String identifier, Map<String, ?> map);
+CompletableFuture<RosePayload> update(String database, String collection, String identifier, String key, String value);
+CompletableFuture<RosePayload> update(String database, String collection, String identifier, String key, int value);
+CompletableFuture<RosePayload> update(String database, String collection, String identifier, String key, long value);
+CompletableFuture<RosePayload> update(String database, String collection, String identifier, String key, double value);
+CompletableFuture<RosePayload> update(String database, String collection, String identifier, String key, boolean value);
+CompletableFuture<RosePayload> update(String database, String collection, String identifier, String key, Object value);
+CompletableFuture<RosePayload> update (String database, String collection, String identifier, Map<String, ?> map);
 
 /**
 * Filtering of a specific database's entire collections.
@@ -76,6 +76,11 @@ CompletableFuture<AggregatedCollection> filter(String database, String collectio
 CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, long value, NumberFilter filter);
 CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, boolean value);
 CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, T value);
+
+/**
+* Revert an item back to its previous state.
+*/
+CompletableFuture<RosePayload> revert(String database, String collection, String key);
 ```
 
 ## Number Filters
@@ -89,6 +94,44 @@ This is used to filter strings using the `filter()` method.
 ```java
 IGNORE_CASING, STRICT, IS_NOT_EQUALS_STRICT, IS_NOT_EQUALS_RELAXED;
 ```
+
+## Rose Payload
+Rose Payload is a custom class that holds the response from the server, it contains both the raw response, JSONObject and
+a method to transform it into the specified class with the help of GSON (and also the kode response from the server).
+
+An example of converting a response from Rose Payload to its class is:
+```java
+public class Item { public String someKey; public String anotherKey; }
+
+driver.get("database", "collection", "identifier").thenApply(payload -> payload.as(Item.class))
+.thenAccept(item -> System.out.println(item.someKey));
+```
+
+Please note that the value can be null, we did want to go Optional for this but we decided it wasn't best. To check
+whether the response is null, you can do either:
+
+The easy way is to check whether the kode is 1 which means the server returned a proper response.
+```java
+RosePayload payload = ...
+if(payload.getKode() == 1){
+    // ... do something with the payload.
+}
+```
+
+The complicated part is to check the raw response itself whether it is null or empty.
+```
+RosePayload payload = ...
+if(payload.getRaw() != null || !payload.getRaw().isEmpty() || !payload.getRaw().isBlank()){
+... do something with the payload.
+}
+```
+
+## Rose Item
+Rose Item, unlike it's counterpart, will never return a null response since Rose Item is only acquireable through
+aggregation which means it is guranteed to be a non-null response since the driver will never make a Rose Item without
+a proper response from the server.
+
+The methods between the two are the same with Rose Payload except for getKode() not being present.
 
 ## Exception Handling
 

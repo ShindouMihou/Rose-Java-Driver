@@ -7,6 +7,7 @@ import pw.mihou.rosedb.enums.FilterCasing;
 import pw.mihou.rosedb.enums.NumberFilter;
 import pw.mihou.rosedb.exceptions.FailedAuthorizationException;
 import pw.mihou.rosedb.exceptions.FileModificationException;
+import pw.mihou.rosedb.payloads.RosePayload;
 
 import java.util.Collection;
 import java.util.Map;
@@ -16,15 +17,15 @@ public interface RoseDriver {
 
     /**
      * Retrieves data from the database and returns back
-     * a JSONObject which you can use to retrieve your
+     * a RosePayload which you can use to retrieve your
      * preferred data.
      * @param database the database holding the data.
      * @param collection the collection holding the data.
      * @param identifier the name or identifier of the data.
-     * @return JSONObject.
+     * @return RosePayload.
      * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
-    CompletableFuture<JSONObject> get(String database, String collection, String identifier);
+    CompletableFuture<RosePayload> get(String database, String collection, String identifier);
 
     /**
      * Retrieves all data from the database including collections.
@@ -180,9 +181,7 @@ public interface RoseDriver {
     CompletableFuture<AggregatedCollection> filter(String database, String collection, String key, boolean value);
 
     /**
-     * Adds an item to the database with the usage of JSONObject
-     * since the database server requests for JSON and JSONObject has
-     * all the methods you need to set it up, replacement for BSON Document if this was MongoDB.
+     * Adds an item to the database.
      * @param database the database to place the data.
      * @param collection the collection to place the data.
      * @param identifier the identifier name of the data (which will be used to retrieve, update, remove).
@@ -191,7 +190,20 @@ public interface RoseDriver {
      * @throws pw.mihou.rosedb.exceptions.FileModificationException if the server failed to add the item.
      * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
-    CompletableFuture<JSONObject> add(String database, String collection, String identifier, JSONObject document);
+    CompletableFuture<RosePayload> add(String database, String collection, String identifier, JSONObject document);
+
+    /**
+     * Adds an item to the database with the usage of RosePayload.
+     * @param database the database to place the data.
+     * @param collection the collection to place the data.
+     * @param identifier the identifier name of the data (which will be used to retrieve, update, remove).
+     * @param document the object to add..
+     * @return the same JSON Object but from the server (also with exceptions, if it fails).
+     * @throws pw.mihou.rosedb.exceptions.FileModificationException if the server failed to add the item.
+     * @throws pw.mihou.rosedb.exceptions.FailedAuthorizationException throws authorization exception if authentication code is invalid.
+     */
+    <T> CompletableFuture<RosePayload> add(String database, String collection, String identifier, T document);
+
 
     /**
      * Removes a key (and value) from an data (item).
@@ -199,22 +211,22 @@ public interface RoseDriver {
      * @param collection the collection holding the data.
      * @param identifier the identifier of the data.
      * @param key the key that will be removed.
-     * @return the updated data in the form of an JSONObject.
+     * @return the updated data in the form of an RosePayload.
      * @throws FileModificationException if the server failed to update the item.
      * @throws FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
-    CompletableFuture<JSONObject> remove(String database, String collection, String identifier, String key);
+    CompletableFuture<RosePayload> remove(String database, String collection, String identifier, String key);
     /**
      * Removes a key (and value) from an data (item).
      * @param database the database holding the data.
      * @param collection the collection holding the data.
      * @param identifier the identifier of the data.
      * @param keys the keys that will be removed.
-     * @return the updated data in the form of an JSONObject.
+     * @return the updated data in the form of an RosePayload.
      * @throws FileModificationException if the server failed to update the item.
      * @throws FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
-    CompletableFuture<JSONObject> remove(String database, String collection, String identifier, Collection<String> keys);
+    CompletableFuture<RosePayload> remove(String database, String collection, String identifier, Collection<String> keys);
 
 
     /**
@@ -254,11 +266,11 @@ public interface RoseDriver {
      * @param identifier the identifier of the data.
      * @param key the key that will be paired with the value.
      * @param value the value that will be paired with the key.
-     * @return the updated data in the form of an JSONObject.
+     * @return the updated data in the form of an RosePayload.
      * @throws FileModificationException if the server failed to update the item.
      * @throws FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
-    CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, String value);
+    CompletableFuture<RosePayload> update(String database, String collection, String identifier, String key, String value);
 
 
     /**
@@ -268,11 +280,11 @@ public interface RoseDriver {
      * @param identifier the identifier of the data.
      * @param key the key that will be paired with the value.
      * @param value the value that will be paired with the key.
-     * @return the updated data in the form of an JSONObject.
+     * @return the updated data in the form of an RosePayload.
      * @throws FileModificationException if the server failed to update the item.
      * @throws FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
-    CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, int value);
+    CompletableFuture<RosePayload> update(String database, String collection, String identifier, String key, int value);
 
     /**
      * Updates a key-value item (it will also add if it doesn't exist).
@@ -281,11 +293,11 @@ public interface RoseDriver {
      * @param identifier the identifier of the data.
      * @param key the key that will be paired with the value.
      * @param value the value that will be paired with the key.
-     * @return the updated data in the form of an JSONObject.
+     * @return the updated data in the form of an RosePayload.
      * @throws FileModificationException if the server failed to update the item.
      * @throws FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
-    CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, boolean value);
+    CompletableFuture<RosePayload> update(String database, String collection, String identifier, String key, boolean value);
 
     /**
      * Updates a key-value item (it will also add if it doesn't exist).
@@ -294,11 +306,11 @@ public interface RoseDriver {
      * @param identifier the identifier of the data.
      * @param key the key that will be paired with the value.
      * @param value the value that will be paired with the key.
-     * @return the updated data in the form of an JSONObject.
+     * @return the updated data in the form of an RosePayload.
      * @throws FileModificationException if the server failed to update the item.
      * @throws FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
-    CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, double value);
+    CompletableFuture<RosePayload> update(String database, String collection, String identifier, String key, double value);
 
     /**
      * Updates a key-value item (it will also add if it doesn't exist).
@@ -307,11 +319,11 @@ public interface RoseDriver {
      * @param identifier the identifier of the data.
      * @param key the key that will be paired with the value.
      * @param value the value that will be paired with the key.
-     * @return the updated data in the form of an JSONObject.
+     * @return the updated data in the form of an RosePayload.
      * @throws FileModificationException if the server failed to update the item.
      * @throws FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
-    CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, long value);
+    CompletableFuture<RosePayload> update(String database, String collection, String identifier, String key, long value);
 
     /**
      * Updates a key-value item (it will also add if it doesn't exist).
@@ -320,11 +332,11 @@ public interface RoseDriver {
      * @param identifier the identifier of the data.
      * @param key the key that will be paired with the value.
      * @param value the value that will be paired with the key.
-     * @return the updated data in the form of an JSONObject.
+     * @return the updated data in the form of an RosePayload.
      * @throws FileModificationException if the server failed to update the item.
      * @throws FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
-    CompletableFuture<JSONObject> update(String database, String collection, String identifier, String key, Object value);
+    CompletableFuture<RosePayload> update(String database, String collection, String identifier, String key, Object value);
 
     /**
      * Adds/updates/removes multiple key-value items to an data.
@@ -332,12 +344,20 @@ public interface RoseDriver {
      * @param collection the collection holding the data.
      * @param identifier the identifier of the data.
      * @param map a map of key-value pairs.
-     * @return the updated data in the form of an JSONObject.
+     * @return the updated data in the form of an RosePayload.
      * @throws FileModificationException if the server failed to update the item.
      * @throws FailedAuthorizationException throws authorization exception if authentication code is invalid.
      */
-    CompletableFuture<JSONObject> update (String database, String collection, String identifier, Map<String, ?> map);
+    CompletableFuture<RosePayload> update (String database, String collection, String identifier, Map<String, ?> map);
 
+    /**
+     * Reverts an item to its previous form.
+     * @param database the database where the item is located.
+     * @param collection the collection where the item is locate.d
+     * @param identifier the identifier/name of the item.
+     * @return a payload that contains the response and kode.
+     */
+    CompletableFuture<RosePayload> revert(String database, String collection, String identifier);
     /**
      * Performs a graceful close on the client's connection with the server.
      * It waits for all the currently running requests to finish before closing the client.

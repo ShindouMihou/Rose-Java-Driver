@@ -17,7 +17,6 @@ public class ListenerManager {
 
     public static void pass(JSONObject response){
         if(!response.isNull("kode") && !response.isNull("replyTo")){
-            log.debug("Received request from server: {}", response.toString());
             listeners.stream().filter(listener -> listener.type() == Listening.RECEIVE).forEach(listener -> listener.execute(response));
         }
     }
