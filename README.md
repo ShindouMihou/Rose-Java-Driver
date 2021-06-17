@@ -1,5 +1,5 @@
 # RoseDB's Official Java Driver
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/pw.mihou/Rose-Java-Driver/badge.svg)](https://maven-badges.herokuapp.com/maven-central/pw.mihou/Rose-Java-Driver)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/pw.mihou/Rose-Java-Driver/badge.png?style=flat)](https://maven-badges.herokuapp.com/maven-central/pw.mihou/Rose-Java-Driver)
 
 The official Java driver for [RoseDB](https://github.com/ShindouMihou/RoseDB) with simple implementations; this covers all of the functions of RoseDB as of writing from updating values to deleting, adding values to filtering and aggregation of database and collections. It basically has everything.
 
@@ -194,9 +194,6 @@ ListenerManager.addListener(new onReceiveListener());
 
 ## Installation
 
-You can install the driver to your Maven Project, you can add it immediately as the project is available via Central Maven,
-though for Gradle users, you may have to use Jitpack (if it is not available, please try).
-
 **Maven**
 ```xml
 <dependency>
@@ -208,17 +205,7 @@ though for Gradle users, you may have to use Jitpack (if it is not available, pl
 
 **Gradle**
 
-Step 1. Add it in your root build.gradle at the end of repositories:
-```gradle
-	allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
-	}
-```
-
-Step 2. Add the dependency
+Step 1. Add the dependency
 ```gradle
 	dependencies {
 	        implementation 'pw.mihou:Rose-Java-Driver:Tag'
